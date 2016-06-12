@@ -1,0 +1,77 @@
+.containsAll {
+  position: relative;
+}
+
+.logo {
+  height: 13em;
+  width: 15em;
+  border: 1px solid black;
+  float: left;
+  z-index: 1000;
+}
+
+.navigation {
+  height: 100px;
+}
+
+.maincontent {
+  border: 1px solid black;
+  height: 100%;
+}
+
+.footer {
+	height: 38px;
+  border: 1px solid black;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#chatbutton {
+	text-align: left;
+	width: 150px;
+	float: right;
+}
+
+.chat {
+  z-index: 1000;
+/*  height: 25em;
+  width: 24em; */
+  height: 40%;
+  width: 20%;
+  display: block;
+  border: 1px solid #000;
+  position: fixed;
+  right: 0px;
+  bottom: 38px;
+}
+.chat .innerchat {
+  position:relative;
+  height:100%;
+  width:100%;    
+}
+.chat .innerchat .textbox {
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  border:none;
+  background:#ccc;
+  color:#404040;
+  height:35px;
+  text-indent:1px;
+}
+
+.chatcontent {
+	border: 1px solid black;
+	height: 90%;
+	overflow-y: scroll;
+}
+
+#hidden {
+	position: absolute;
+	height: 0px;
+	width: 0px;
+	border: none;
+	padding: 0px;
+}

@@ -1,0 +1,70 @@
+<html ng-app="mainApp">
+<head>
+</head>
+<body>
+
+<link rel="stylesheet" type="text/css" href="/css/ingame.css">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+<div class="containsAll" ng-controller="mainController as mainCtrl">
+	<div>
+		<div class="logo">
+
+		</div>
+		<div class="navigation">
+			<table>
+				<tr>
+					<td><a href="/gameindex"><button style="btn btn-active">Main</button></a></td>
+					<td><a href="/leagues"><button style="btn btn-active">Tournaments</button></a></td>
+					<td><a href="/users/logout"><button style="btn btn-active">Logout</button></a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="mainContent">
+		{{{ body }}}
+	</div>
+
+	<!-- CHAT Functionality -->
+	<div ng-controller="chatController as chat">
+		<div ng-show="chat.enabled" class="chat">
+			<div class="innerchat">
+				<form>
+				<div class="chatcontent"></div>
+				<input ng-model="chat.message" class="form-control textbox" value="{{ chat.message }}">
+				<input ng-click="chat.submitMessage()" id="hidden" type="submit" name="update" value=" " hidefocus="true" tabindex="-1"/>
+    			</form>
+			</div>
+		</div>
+		<div class="footer">
+			<button ng-click="chat.toggle()" id="chatbutton" class="btn btn-default">[[ chat.roomName ]]</button>
+		</div>
+	</div>
+</div>
+
+<div id='message'></div>
+
+<script>
+var socket = io();
+
+socket.on('serverMsg', function(data) {
+	for (var i in data) {
+		console.log(i);
+	}
+    element = document.getElementById('message');
+    element.innerHTML = data[0].strength;
+});
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+<script src="/controllers/maincontroller.js"></script>
+
+</body>
+</html>
