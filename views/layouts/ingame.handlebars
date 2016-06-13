@@ -22,13 +22,15 @@
 			<table>
 				<tr>
 					<td><a href="/gameindex"><button style="btn btn-active">Main</button></a></td>
-					<td><a href="/leagues"><button style="btn btn-active">Tournaments</button></a></td>
+					<td><a href="/leagues"><button style="btn btn-active">Leagues</button></a></td>
 					<td><a href="/users/logout"><button style="btn btn-active">Logout</button></a></td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="mainContent">
+		<button ng-click="mainCtrl.newGame()" class="btn btn-active">Look for game</button>
+		<div id="message2" ng-show="mainCtrl.gameActive">This will show only when a game is active.</div>
 		{{{ body }}}
 	</div>
 
@@ -37,7 +39,7 @@
 		<div ng-show="chat.enabled" class="chat">
 			<div class="innerchat">
 				<form>
-				<div class="chatcontent"></div>
+				<div id="chatcontent" class="chatcontent"></div>
 				<input ng-model="chat.message" class="form-control textbox" value="{{ chat.message }}">
 				<input ng-click="chat.submitMessage()" id="hidden" type="submit" name="update" value=" " hidefocus="true" tabindex="-1"/>
     			</form>
@@ -50,18 +52,6 @@
 </div>
 
 <div id='message'></div>
-
-<script>
-var socket = io();
-
-socket.on('serverMsg', function(data) {
-	for (var i in data) {
-		console.log(i);
-	}
-    element = document.getElementById('message');
-    element.innerHTML = data[0].strength;
-});
-</script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script src="/controllers/maincontroller.js"></script>

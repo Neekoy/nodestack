@@ -11,6 +11,7 @@
   "dependencies": {
     "bcryptjs": "*",
     "body-parser": "*",
+    "connect": "^3.4.1",
     "connect-flash": "*",
     "connect-memcached": "^0.2.0",
     "cookie-parser": "^1.4.1",
@@ -21,6 +22,7 @@
     "express-validator": "*",
     "mongodb": "*",
     "mongoose": "*",
+    "node-uuid": "^1.4.7",
     "passport": "*",
     "passport-http": "*",
     "passport-local": "*",

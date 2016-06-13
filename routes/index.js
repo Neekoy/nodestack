@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+
 // Get Homepage
 router.get('/', ensureAuthenticated, function(req, res){
+  	console.log("Sesssion ID: " + req.session.id);
+	console.log("Sesssion Username: " + req.session.username + "\n");
 	res.render('gameindex', { layout: 'ingame'});
 });
 
@@ -15,12 +18,6 @@ function ensureAuthenticated(req, res, next){
 	}
 }
 
-router.get('/leagues', ensureAuthenticated, function(req, res) {
-	res.render('leagues', { layout: 'ingame'});
-});
 
-router.get('/gameindex', ensureAuthenticated, function(req, res) {
-	res.render('gameindex', { layout: 'ingame'});
-});
 
 module.exports = router;
