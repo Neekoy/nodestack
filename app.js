@@ -149,7 +149,7 @@ io.sockets.on('connection', function(socket) {
       socket.join(roomName);
       io.sockets.in(roomName).emit('alert', "You have joined this room");
       console.log("Active game ID: " + ACTIVE_GAMES[roomName]);
-//      var newRoom = roomControl.newRoom(username);
+//      var newRoom = roomControl.newRoom(username); 
     });
 
     socket.on('chatMessage', function(data) {
