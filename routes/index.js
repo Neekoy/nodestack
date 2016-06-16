@@ -18,6 +18,4 @@ function ensureAuthenticated(req, res, next){
 	}
 }
 
-
-
 module.exports = router;

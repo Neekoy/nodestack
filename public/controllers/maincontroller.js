@@ -1,10 +1,11 @@
-console.log("Controller has been loaded.");
+console.log("Main controller has been loaded.");
 
 var socket = io();
 var chatbox = document.getElementById('chatcontent');
+var username = "";
 
 socket.on('alert', function(data) {
-	console.log(data);
+		console.log(data);
 });
 
 socket.on('serverMsg', function(data) {
@@ -16,8 +17,8 @@ socket.on('serverMsg', function(data) {
 });
 
 socket.on('gameFound', function(data) {
-//	console.log(data);
-	socket.emit('joinRoom', data)
+	gameState = "Game has been found.";
+	socket.emit('joinRoom', data);
 });
 
 socket.on('newChatMessage', function(data) {
@@ -34,6 +35,7 @@ app.controller('mainController', function($scope, $http) {
 
 	this.page = 1;
 	this.gameActive = false;
+	this.username = "";
 
 	this.changePage = function(pageNum) {
 		this.page = pageNum;
@@ -43,11 +45,16 @@ app.controller('mainController', function($scope, $http) {
 		return this.page === pageNum;
 	};
 
-	this.newGame = function() {
+	this.findGame = function() {
 		socket.emit("searchGame", "There is a new game request.");
 		this.gameActive = true;
 	};
 
+	socket.on('username', function(data) {
+		this.username = data;
+		username = data;
+		$scope.$apply();
+	}.bind(this));
 
 
 });
@@ -56,7 +63,6 @@ app.controller('chatController', function () {
 	this.message= "";
 	this.roomName = "Default";
 	this.enabled = true;
-	console.log(this.roomName);
 
 	this.toggle = function() {
 		if (this.enabled === true) {
@@ -70,4 +76,13 @@ app.controller('chatController', function () {
 		socket.emit("chatMessage", this.message);
 		this.message= "";
 	};
+});
+
+app.controller('gameController', function($scope, $http) {
+	this.lookingForGame = true;
+
+	socket.on('gameFound', function () {
+		this.lookingForGame = false;
+		$scope.$apply();
+	}.bind(this));
 });

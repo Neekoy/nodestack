@@ -23,14 +23,16 @@
 				<tr>
 					<td><a href="/gameindex"><button style="btn btn-active">Main</button></a></td>
 					<td><a href="/leagues"><button style="btn btn-active">Leagues</button></a></td>
+					<td><a href="/gameroom"><button ng-click="mainCtrl.findGame()" style="btn btn-active">Look for game</button></a></td>
+					<td><a href="/collection"><button style="btn btn-active">My collection</button></a></td>
+					<td ng-show="mainCtrl.username"><button style="btn btn-active"> [[ mainCtrl.username ]] </button></td>
 					<td><a href="/users/logout"><button style="btn btn-active">Logout</button></a></td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="mainContent">
-		<button ng-click="mainCtrl.newGame()" class="btn btn-active">Look for game</button>
-		<div id="message2" ng-show="mainCtrl.gameActive">This will show only when a game is active.</div>
+<!--		<div id="message2" ng-show="mainCtrl.gameActive">This will show only when a game is active.</div> -->
 		{{{ body }}}
 	</div>
 
@@ -55,6 +57,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script src="/controllers/maincontroller.js"></script>
+<script src="/controllers/gamecontroller.js"></script>
 
 </body>
 </html>

@@ -7,17 +7,6 @@
   <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 </head>
 <body>
-  <script>
-    var socket = io();
-
-    socket.on('serverMsg', function(data) {
-      for (var i in data) {
-      console.log(i);
-    }
-      element = document.getElementById('message');
-     element.innerHTML = data[0].strength;
-    });
-  </script>
 	<div class="container">
       <div class="header clearfix">
         <nav>

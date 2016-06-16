@@ -41,11 +41,13 @@
   width: 20%;
   display: block;
   border: 1px solid #000;
+  border-color: white;
   position: fixed;
   right: 0px;
   bottom: 38px;
 }
 .chat .innerchat {
+  background-color: white;
   position:relative;
   height:100%;
   width:100%;    

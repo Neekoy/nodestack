@@ -9,8 +9,12 @@ router.get('/gameindex', ensureAuthenticated, function(req, res) {
 	res.render('gameindex', { layout: 'ingame'});
 });
 
-router.get('/newroom', ensureAuthenticated, function(req, res) {
+router.get('/gameroom', ensureAuthenticated, function(req, res) {
   	res.render('gameroom', { layout: 'ingame' });
+});
+
+router.get('/collection', ensureAuthenticated, function(req, res) {
+  	res.render('collection', { layout: 'ingame' });
 });
 
 function ensureAuthenticated(req, res, next){

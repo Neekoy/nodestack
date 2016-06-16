@@ -1,0 +1,6 @@
+<link rel="stylesheet" type="text/css" href="/css/gameroom.css">
+
+<div ng-controller="gameController as game">
+	<div ng-show="game.lookingForGame">You are currently looking for game.</div>
+	<div class="gameWrapper" ng-hide="game.lookingForGame">You are now in a game.</div>
+</div>

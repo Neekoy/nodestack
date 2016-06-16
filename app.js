@@ -12,10 +12,10 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var MemcachedStore = require('connect-memcached')(session);
 var uuid = require('node-uuid');
+var Schema = mongoose.Schema;
 
-
-mongoose.connect('mongodb://localhost/loginapp');
-var db = mongoose.connection;
+mongoose.connect('mongodb://localhost/test');
+global.db = mongoose.connection;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -27,6 +27,10 @@ var serv = require('http').Server(app);
 var io = require('socket.io').listen(serv);
 
 var roomControl = require('./logic/roomcontrol');
+var cardGet = require('./logic/cardget');
+var registerCardModel = require('./models/cards');
+global.gameUser = require('./models/gameuser');
+
 
 // Declare the Express session
 var sessionMiddleware = session({
@@ -124,33 +128,25 @@ io.sockets.on('connection', function(socket) {
 
     PLAYER_SOCKETS[username] = socket.id;
 
+    socket.emit('username', username);
+
     if ( LOOKING_FOR_GAME.hasOwnProperty(username) ) {
-      console.log("This user is looking for a game " + username);
+      console.log("This user is ALREADY looking for a game " + username);
       LOOKING_FOR_GAME[username] = socket.id;
     };
 
     if ( ACTIVE_GAMES.hasOwnProperty(username) ) {
+      console.log("This user is aleady in active game.");
       socket.join(ACTIVE_GAMES[username]);
+      io.to(ACTIVE_GAMES[username]).emit('alert', "You have joined room" + roomName);
     };
 
-    console.log("New socket connection from " + username + "\n Socket Session ID: " + socket.id);
-
-    findCard = function(cardName) {
-        db.cards.find({ name : cardName }).toArray(function(err, result) {
-            if (err) {
-                console.log(err);
-            } else if (result.length) {
-                socket.emit('serverMsg', result);
-            } else
-                console.log("No results found.");
-        });
-    };
+    console.log("New socket connection from " + username + " Session ID: " + socket.id);
 
     socket.on('searchGame', function (data) {
       username = socket.request.session.username;
       console.log('A new game request has been submitted by ' + username);
       LOOKING_FOR_GAME[username] = socket.id;
-      console.log(Object.keys(LOOKING_FOR_GAME));
     });
 
     socket.on('joinRoom', function(data) {
@@ -158,6 +154,26 @@ io.sockets.on('connection', function(socket) {
 
       socket.join(roomName);
       io.sockets.in(roomName).emit('alert', "You have joined room" + roomName);
+    });
+
+    socket.on('getOwnedCards', function(data) {
+      var gameUser = db.model("gameUser");
+      var cardsGet = db.model("Cards");
+      console.log("User " + username + " wants to check their collection.");
+      toSubmit = [];
+
+      gameUser.find({ "username": username }, function (err, data) {
+        toSubmit.push(data[0].ownedCards)
+//        socket.emit("collectionDataOwned", data[0].ownedCards);
+      });
+      cardsGet.find({}, function (err, data) {
+        if (err) throw err;
+        toSubmit.push(data);
+//        socket.emit("collectionDataAll", data);
+          
+//        console.log(toSubmit);
+        socket.emit("collectionData", toSubmit);
+      });
     });
 
     socket.on('chatMessage', function(data) {
@@ -184,28 +200,20 @@ setInterval(function() {
     roomId = uuid.v4();
 
     user1 = Object.keys(LOOKING_FOR_GAME)[0];
-    socket1 = LOOKING_FOR_GAME[user1];
+    socket1 = PLAYER_SOCKETS[user1];
     user2 = Object.keys(LOOKING_FOR_GAME)[1];
-    socket2 = LOOKING_FOR_GAME[user2];
-
-    gameFoundInfo = [];
-    gameFoundInfo.push(roomId, user1, user2);
-
-    console.log("Socket that the message will be submitted to " + socket1 + " " + socket2);
-    io.to(socket1).emit("gameFound", gameFoundInfo);
-    io.to(socket2).emit("gameFound", gameFoundInfo);
+    socket2 = PLAYER_SOCKETS[user2];
 
     ACTIVE_GAMES[user1] = [roomId];
     ACTIVE_GAMES[user2] = [roomId];
 
-    roomControl.newRoom(io, roomId, user1, user2);
-
     delete LOOKING_FOR_GAME[user1];
     delete LOOKING_FOR_GAME[user2];
+
+    roomControl.newRoom(io, roomId, user1, user2);
+
   } else {
 //    console.log("There are less than 2 people looking for a game.");
   }
 
 },1000/1);
-
-

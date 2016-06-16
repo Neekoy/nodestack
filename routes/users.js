@@ -40,14 +40,27 @@ router.post('/register', function(req, res){
 	} else {
 		var newUser = new User({
 			name: name,
-			email:email,
+			email: email,
 			username: username,
 			password: password
+		});
+
+		var newGameUser = new gameUser({
+			username: name,
+			gold: 100,
+			level: 1,
+			experience: 0,
+			ownedCards: ["1000", "1001", "1002", "1003", "1004"]
 		});
 
 		User.createUser(newUser, function(err, user){
 			if(err) throw err;
 //			console.log(user);
+		});
+
+		gameUser.createUser(newGameUser, function(err, user) {
+			if (err) throw err;
+			console.log(newGameUser);
 		});
 
 		req.flash('success_msg', 'You are registered and can now login');
