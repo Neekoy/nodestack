@@ -1,9 +1,29 @@
+<link rel="stylesheet" type="text/css" href="/css/collection.css">
 <div ng-controller="collectionControl as collect">
 	<div class="cardSpace">
-		<button ng-click="collect.getOwnedCards()" style="btn btn-active">Click to get cards.</button>
-		<div style="float: left" ng-repeat="card in collect.allCards" class="cardShowcase">
-			<img style="height: 300px" ng-src="images/[[card.fullImage]]">
-			<div>CARD</div>
+		<div class="collectionHeader">
+			<button ng-click="collect.changeTab('ownedCards')" style="btn btn-active">Owned cards</button>
+			<button ng-click="collect.changeTab('allCards')" style="btn btn-active">All cards</button>
+			<button ng-click="collect.toggleEditor()" style="btn btn-active">Deck editor</button>
 		</div>
+
+		<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allOwnedCards" class="cardShowcase">
+			<img ng-click="collect.imageClicked(card)"  class="cardImage" ng-src="images/[[card.fullImage]]">
+			<div> [[ card.quantity ]] </div>
+		</div>
+		<div ng-show="collect.checkTab('allCards')" style="float: left" ng-repeat="card in collect.allCards" class="cardShowcase">
+			<img ng-click="collect.imageClicked(card)" class="cardImage" ng-src="images/[[card.fullImage]]">
+			<div> [[ card.quantity ]] </div>
+		</div>
+		<div ng-show="collect.editorOpened" class="editor">
+			<div>
+				<button style="btn btn-active">Decks</button>
+				<button style="btn btn-active">Create</button>
+			</div>
+			<div ng-repeat="card in collect.currentDeck">
+				<div class="editor-number"> [[ card.inDeck ]] </div>
+				<div ng-click="collect.clickedInDecklist(card)" class="editor-card-name"> [[ card.name ]] </div>
+			</div>
+		</div>	
 	</div>
 </div>

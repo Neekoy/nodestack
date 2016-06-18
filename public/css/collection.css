@@ -1,0 +1,18 @@
+.collectionHeader {
+	text-align: center;
+}
+
+.cardImage {
+	height: 300px;
+}
+
+.editor {
+	float: right;
+	height: 90%;
+	width: 400px;
+	border: 1px solid black;
+}
+
+.editor-number {
+	float: left;
+}

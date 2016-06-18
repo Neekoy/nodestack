@@ -163,15 +163,12 @@ io.sockets.on('connection', function(socket) {
       toSubmit = [];
 
       gameUser.find({ "username": username }, function (err, data) {
-        toSubmit.push(data[0].ownedCards)
-//        socket.emit("collectionDataOwned", data[0].ownedCards);
+        toSubmit.push(data[0].ownedCards);
       });
       cardsGet.find({}, function (err, data) {
         if (err) throw err;
         toSubmit.push(data);
-//        socket.emit("collectionDataAll", data);
           
-//        console.log(toSubmit);
         socket.emit("collectionData", toSubmit);
       });
     });
