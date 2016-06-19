@@ -7,11 +7,31 @@
   width: 15em;
   border: 1px solid black;
   float: left;
-  z-index: 1000;
 }
 
 .navigation {
+  float: auto;
   height: 100px;
+  border: 2px solid black;
+}
+
+.navigationTable {
+  height: 100%;
+}
+
+.progress-wrapper{
+    position: relative;
+}
+
+.progress-wrapper .level{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    text-align: center;
+    width: 100%;
+    z-index: 1;
 }
 
 .maincontent {

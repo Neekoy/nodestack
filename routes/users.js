@@ -48,14 +48,15 @@ router.post('/register', function(req, res){
 		var newGameUser = new gameUser({
 			username: name,
 			gold: 100,
+			dust: 100,
 			level: 1,
 			experience: 0,
-			ownedCards: ["1000", "1001", "1002", "1003", "1004"]
+			ownedCards: [ { 1000: 3, 1001: 2 }]
 		});
 
 		User.createUser(newUser, function(err, user){
 			if(err) throw err;
-//			console.log(user);
+			console.log(user);
 		});
 
 		gameUser.createUser(newGameUser, function(err, user) {

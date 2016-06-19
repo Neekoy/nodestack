@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
 // Get Homepage
 router.get('/', ensureAuthenticated, function(req, res){
   	console.log("Sesssion ID: " + req.session.id);

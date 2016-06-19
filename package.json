@@ -9,6 +9,8 @@
   "author": "Brad Traversy",
   "license": "ISC",
   "dependencies": {
+    "angular-svg-round-progressbar": "^0.4.4",
+    "async": "^2.0.0-rc.6",
     "bcryptjs": "*",
     "body-parser": "*",
     "connect": "^3.4.1",

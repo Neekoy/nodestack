@@ -9,6 +9,9 @@ var gameUserSchema = mongoose.Schema({
 	gold: {
 		type: Number,
 	},
+	dust: {
+		type: Number,
+	},
 	level: {
 		type: Number,
 	},

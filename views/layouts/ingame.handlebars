@@ -1,7 +1,7 @@
 <html ng-app="mainApp">
 <head>
 </head>
-<body>
+<body ng-cloak>
 
 <link rel="stylesheet" type="text/css" href="/css/ingame.css">
 
@@ -19,22 +19,105 @@
 
 		</div>
 		<div class="navigation">
-			<table>
+			<table class="navigationTable">
 				<tr>
-					<td><a href="/gameindex"><button style="btn btn-active">Main</button></a></td>
+					<td class="navTableData"><button ng-click="mainCtrl.changeTab('main')" style="btn btn-active">Main</button></td>
 					<td><a href="/leagues"><button style="btn btn-active">Leagues</button></a></td>
-					<td><a href="/gameroom"><button ng-click="mainCtrl.findGame()" style="btn btn-active">Look for game</button></a></td>
-					<td><a href="/collection"><button style="btn btn-active">My collection</button></a></td>
-					<td ng-show="mainCtrl.username"><button style="btn btn-active"> [[ mainCtrl.username ]] </button></td>
+					<td><button ng-click="mainCtrl.changeTab('collect')" style="btn btn-active">My collection</button></td>
+					<td style="width: 50%;"></td>
+					<td><button ng-click="mainCtrl.findGame()" style="btn btn-active">Look for game</button></a></td>
+					<td style="width: 50%;"></td>
+					<td ng-show="mainCtrl.username"> [[ mainCtrl.username ]] </td>
+					<td ng-show="mainCtrl.username"> </td>
+					<td class="navTableData">
+						<div class="progress-wrapper">
+							<round-progress
+						    max="100"
+						    current="mainCtrl.userexp"
+						    color="#45ccce"
+						    bgcolor="#eaeaea"
+						    radius="25"
+						    stroke="4"
+						    semi="false"
+						    rounded="true"
+						    clockwise="true"
+						    responsive="false"
+						    duration="800"
+						    animation="easeInOutQuart"
+						    animation-delay="0">11</round-progress>
+						    <div class="level"> [[ mainCtrl.userlevel ]] </div>
+						</div>
+					</td>
+					<td ng-show="mainCtrl.username"> [[ mainCtrl.usergold ]] </td>
+					<td ng-show="mainCtrl.username"></td>
 					<td><a href="/users/logout"><button style="btn btn-active">Logout</button></a></td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="mainContent">
-<!--		<div id="message2" ng-show="mainCtrl.gameActive">This will show only when a game is active.</div> -->
-		{{{ body }}}
-	</div>
+		<!-- COLLECTION HANDLER -->
+		<link rel="stylesheet" type="text/css" href="/css/collection.css">
+		<div ng-show="mainCtrl.activeTab('collect')">
+			<div class="cardSpace" ng-controller="collectionControl as collect">
+				<!-- CARD COLLECTION HEADER -->
+					<div class="collectionHeader">
+						<button ng-click="collect.changeTab('ownedCards')" style="btn btn-active">Owned cards</button>
+						<button ng-click="collect.changeTab('allCards')" style="btn btn-active">All cards</button>
+						<button ng-click="collect.toggleEditor()" style="btn btn-active">Deck editor</button>
+
+						<div> Dust: [[ collect.userdust ]]</div>
+					</div>
+
+
+				<!-- POPUP PANEL CARD COLLECTION -->
+				<div ng-click="collect.hidePopupPanel()" ng-show="collect.popupPanel" class="popupPanelWrap">
+				<div ng-click="$event.stopPropagation()" class="popupPanel">
+					<div><img ng-src="images/[[collect.cardHighlighted.fullImage]]"></div>
+					<div>
+						<button class="btn btn-active">Sell Card</button>
+						<button ng-click="collect.buyCard(collect.cardHighlighted)" class="btn btn-active">Buy Card</button>
+					</div>
+				</div>
+				</div>
+
+				<!-- CARD COLLECTION BODY -->
+				<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allOwnedCards" class="cardShowcase">
+					<img ng-click="collect.imageClicked(card)"  class="cardImage" ng-src="images/[[card.fullImage]]">
+					<div> [[ card.quantity ]] </div>
+				</div>
+				<div ng-show="collect.checkTab('allCards')" style="float: left" ng-repeat="card in collect.allCards" class="cardShowcase">
+					<img ng-click="collect.imageClicked(card)" class="cardImage" ng-src="images/[[card.fullImage]]">
+					<div> [[ card.quantity ]] </div>
+				</div>
+				<div ng-show="collect.editorOpened" class="editor">
+					<div>
+						<button style="btn btn-active">Decks</button>
+						<button style="btn btn-active">Create</button>
+					</div>
+					<div ng-repeat="card in collect.currentDeck">
+						<div class="editor-number"> [[ card.inDeck ]] </div>
+						<div ng-click="collect.clickedInDecklist(card)" class="editor-card-name"> [[ card.name ]] </div>
+					</div>
+				</div>	
+			</div>
+		</div>
+		<!-- END OF COLLECTION HANDLER -->
+
+		<!-- MAIN PAGE HANDLER -->
+		<div ng-show="mainCtrl.activeTab('main')">
+			This is the main page.
+		</div>
+		<!-- END OF MAIN PAGE HANDLER -->
+
+		<!-- GAME ROOM HANDLER -->
+		<link rel="stylesheet" type="text/css" href="/css/gameroom.css">
+		<div ng-show="mainCtrl.activeTab('gameroom')" ng-controller="gameController as game">
+			<div ng-show="game.lookingForGame">You are currently looking for game.</div>
+			<div class="gameWrapper" ng-hide="game.lookingForGame">You are now in a game.</div>
+		</div>
+			</div>
+		<!-- END OF GAME ROOM HANDLER -->
 
 	<!-- CHAT Functionality -->
 	<div ng-controller="chatController as chat">
@@ -56,6 +139,7 @@
 <div id='message'></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-svg-round-progressbar/0.4.4/roundProgress.min.js"></script>
 <script src="/controllers/maincontroller.js"></script>
 <script src="/controllers/gamecontroller.js"></script>
 

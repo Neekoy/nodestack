@@ -4,11 +4,10 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	this.allOwnedCards = [];
 	this.tab = "ownedCards";
 	this.editorOpened = false;
+	this.popupPanel = false;
 	this.currentDeck = [];
 
 	console.log("Greetings from the collection controller file.");
-
-	socket.emit('getOwnedCards', username);
 
 	socket.on("collectionData", function (data) {
 		ownedList = data[0];
@@ -23,6 +22,30 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 					console.log("There is the " + i + " card match." + this.allCards[k]);
 					this.allCards[k].quantity = withQuantity[i];
 					this.allOwnedCards.push(this.allCards[k]);
+				}
+			}
+		}
+		this.userdust = userdust;
+		$scope.$apply();
+	}.bind(this));
+
+	socket.on("updateOwned", function(data) {
+		console.log('updates');
+		this.userdust = data[0].dust;
+		cardId = data[1][0].uid;
+		console.log(cardId);
+		for (var i in this.allCards) {
+			if (this.allCards[i].uid === cardId) {
+				if (this.allCards[i].quantity) {
+					this.allCards[i].quantity += 1;
+					for ( var k in this.allOwnedCards ) {
+						if ( this.allOwnedCards[k].uid === this.allCards[i].uid) {
+							console.log(this.allOwnedCards[k].quantity);
+						}
+					}
+				} else {
+					this.allCards[i].quantity = 1;
+					this.allOwnedCards.push(this.allCards[i]);
 				}
 			}
 		}
@@ -48,9 +71,9 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 
 	this.imageClicked = function(data) {
 		// This happens if the deck editor is opened
-		for ( var i in this.allOwnedCards ) {
-			if ( this.allOwnedCards[i].uid === data.uid) {
-				if ( this.editorOpened === true ) {
+		if ( this.editorOpened === true ) {
+			for ( var i in this.allOwnedCards ) {
+				if ( this.allOwnedCards[i].uid === data.uid) {
 					if ( ! data.inDeck || data.inDeck === 0) {
 						data.inDeck = 1;
 						this.currentDeck.push(data);
@@ -66,8 +89,31 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 					}
 				}
 			}
+		} else {
+			// This happens if the deck editor is closed
+			this.cardHighlighted = data;
+			this.popupPanel = true;
+
 		}
-		// This happens if the deck editor is closed
+	};
+
+	this.buyCard = function(data) {
+		if ( ! data.quantity || data.quantity <= 4 ) {
+			socket.emit("buyCard", data);
+			console.log("You bought the card");
+		} else {
+			console.log(data);
+			console.log("You already have 4 of this card");
+		}
+	};
+
+	socket.on("buyCardRes", function (data) {
+		console.log(data);
+	});
+
+	this.hidePopupPanel = function() {
+		this.popupPanel = false;
+		this.cardHighlighted = "";
 	};
 
 	this.clickedInDecklist = function(data) {

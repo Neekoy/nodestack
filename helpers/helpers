@@ -1,0 +1,3 @@
+db.gameusers.update( { "username": "rere" }, { $set: { ownedCards: [ { 1000: 2, 1001: 3 } ] } } );
+
+db.gameusers.update( { "username" : "rere" }, { $set: { "dust" : "1000" } } );

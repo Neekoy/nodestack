@@ -13,6 +13,7 @@ var mongoose = require('mongoose');
 var MemcachedStore = require('connect-memcached')(session);
 var uuid = require('node-uuid');
 var Schema = mongoose.Schema;
+var async = require("async");
 
 mongoose.connect('mongodb://localhost/test');
 global.db = mongoose.connection;
@@ -31,6 +32,8 @@ var cardGet = require('./logic/cardget');
 var registerCardModel = require('./models/cards');
 global.gameUser = require('./models/gameuser');
 
+var gameUserModel = db.model("gameUser");
+var cardsGetModel = db.model("Cards");
 
 // Declare the Express session
 var sessionMiddleware = session({
@@ -128,7 +131,10 @@ io.sockets.on('connection', function(socket) {
 
     PLAYER_SOCKETS[username] = socket.id;
 
-    socket.emit('username', username);
+    gameUserModel.find( { "username": username }, function(err, data) {
+      if (err) throw err;
+      socket.emit('userData', data);
+    });
 
     if ( LOOKING_FOR_GAME.hasOwnProperty(username) ) {
       console.log("This user is ALREADY looking for a game " + username);
@@ -157,20 +163,72 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('getOwnedCards', function(data) {
-      var gameUser = db.model("gameUser");
-      var cardsGet = db.model("Cards");
+      var gameUserModel = db.model("gameUser");
+      var cardsGetModel = db.model("Cards");
       console.log("User " + username + " wants to check their collection.");
       toSubmit = [];
 
-      gameUser.find({ "username": username }, function (err, data) {
-        toSubmit.push(data[0].ownedCards);
-      });
-      cardsGet.find({}, function (err, data) {
+      gameUserModel.find({ "username": username }, function (err, data) {
         if (err) throw err;
-        toSubmit.push(data);
-          
-        socket.emit("collectionData", toSubmit);
+        toSubmit.push(data[0].ownedCards);
+
+        cardsGetModel.find({}, function (err, data) {
+          if (err) throw err;
+          toSubmit.push(data);
+            
+          socket.emit("collectionData", toSubmit);
+        });
+
       });
+    });
+
+    socket.on('buyCard', function(data) {
+      cardInfo = [];
+      userInfo = [];
+      exists = false;
+      toSubmit = [];
+      cardsGetModel.find( { "name": data.name }, function (err, data) {
+        if (err) throw err;
+        cardInfo = data;
+        gameUserModel.find( { "username": username }, function (err, data)  {
+          if (err) throw err;
+          userInfo = data;
+
+          if ( userInfo[0].dust >= cardInfo[0].buyPrice) {
+            userInfo[0].dust -= cardInfo[0].buyPrice;
+            ownedCards = userInfo[0].ownedCards[0];
+
+            async.forEach(Object.keys(ownedCards), function(item, callback) {
+              if ( item === cardInfo[0].uid ) {
+                userInfo[0].ownedCards[0][item] += 1;
+                userInfo[0].markModified('ownedCards');
+                userInfo[0].save(function (err) {
+                  if (err) throw err;
+                  toSubmit.push(userInfo, cardInfo);
+                  console.log(toSubmit);
+                  socket.emit("updateOwned", toSubmit);
+                });
+                exists = true;
+              }
+              callback();
+            }, function(err) {
+              if (exists === false) {
+                userInfo[0].ownedCards[0][cardInfo[0].uid] = 1;
+                userInfo[0].markModified('ownedCards');
+                userInfo[0].save(function (err) {
+                  if (err) throw err;
+                  toSubmit.push(userInfo, cardInfo);
+                  socket.emit("updateOwned", toSubmit);
+                });                
+              }
+            }
+            );
+
+          } else {
+            console.log("You don't have enough dust to purchase this card.");
+          };
+        });
+      }); 
     });
 
     socket.on('chatMessage', function(data) {

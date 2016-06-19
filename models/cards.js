@@ -8,6 +8,9 @@ var cardSchema = new Schema({
   sanity: Number,
   cost: Number,
   fullImage: String,
+  rarity: String,
+  buyPrice: Number,
+  sellPrice: Number,
   abilities: [{ firstAbi: String, secondAbi: String }],
   uid: String
 });

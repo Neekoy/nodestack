@@ -3,6 +3,8 @@ console.log("Main controller has been loaded.");
 var socket = io();
 var chatbox = document.getElementById('chatcontent');
 var username = "";
+var userdust = 0;
+var dataFetched = false;
 
 socket.on('alert', function(data) {
 		console.log(data);
@@ -26,36 +28,51 @@ socket.on('newChatMessage', function(data) {
 	chatbox.innerHTML = chatbox.innerHTML + messageContent;
 });
 
-var app = angular.module('mainApp', [], function($interpolateProvider) {
+var app = angular.module('mainApp', ['angular-svg-round-progressbar'], function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
 });
 
 app.controller('mainController', function($scope, $http) {
 
-	this.page = 1;
+	$scope.$watch('$viewContentLoaded', function() {
+		console.log("The content has been fully loaded.");
+	});
+
+	this.tab = "main";
 	this.gameActive = false;
 	this.username = "";
 
-	this.changePage = function(pageNum) {
-		this.page = pageNum;
+	this.changeTab = function(tab) {
+		if (tab === "collect" && dataFetched === false) {
+			socket.emit('getOwnedCards', username);
+			dataFetched = true;
+		}
+		this.tab = tab;
 	};
 
-	this.currPage = function(pageNum) {
-		return this.page === pageNum;
+	this.activeTab = function(tab) {
+		return this.tab === tab;
 	};
 
 	this.findGame = function() {
+		this.tab = "gameroom";
 		socket.emit("searchGame", "There is a new game request.");
 		this.gameActive = true;
 	};
 
-	socket.on('username', function(data) {
-		this.username = data;
-		username = data;
+	socket.on('userData', function(data) {
+		console.log(data);
+		console.log(data[0].dust);
+		this.username = data[0].username;
+		username = data[0].username;
+		this.usergold = data[0].gold;
+		this.userlevel = data[0].level;
+		this.userexp = data[0].experience;
+		this.userdust = data[0].dust;
+		userdust = data[0].dust;
 		$scope.$apply();
 	}.bind(this));
-
 
 });
 
