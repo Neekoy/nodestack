@@ -152,15 +152,32 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	};
 
 	this.toggleInput = function(data) {
-		console.log(data);
 		if ( data === 'activate' ) {
 			this.deckNameInput = true;
 		} else {
-			this.deckNameInput = false;
+			if ( this.deckName === "" ) {
+				console.log("Please enter a deck name.");
+			} else {
+				this.deckNameInput = false;
+			}
 		}
 	};
 
 	this.saveDeck = function() {
+		deck = {};
+		deckWithName = {};
+		for ( var i in this.currentDeck ) {
+			console.log(this.currentDeck[i].uid);
+			console.log(this.currentDeck[i].inDeck);
+			deck[this.currentDeck[i].uid] = this.currentDeck[i].inDeck;
+		};
+		if ( this.deckName != "" ) {
+			deckWithName[this.deckName] = deck;
+			socket.emit('saveDeck', deckWithName);
+			this.currentDeck = [];			
+		} else {
+			console.log("Please enter a name for the deck.");
+		}
 
 	};
 

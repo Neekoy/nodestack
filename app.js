@@ -260,6 +260,14 @@ io.sockets.on('connection', function(socket) {
       });
     });
 
+    socket.on("saveDeck", function (data) {
+      gameUserModel.find( { username: username }, function (err, data) {
+        if (err) throw err;
+        
+      });
+      console.log(data);
+    });
+
     socket.on('chatMessage', function(data) {
       messageContent = [];
       console.log(username);

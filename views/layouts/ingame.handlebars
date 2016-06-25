@@ -99,7 +99,10 @@
 					</div>
 					<div ng-click="$event.stopPropagation()">
 						<div ng-show="!collect.deckNameInput" ng-click="collect.toggleInput('activate')"> [[ collect.deckName ]] </div>
-						<input ng-show="collect.deckNameInput" value="[[collect.deckName]]"></input>
+						<form>
+						<input ng-model="collect.deckName" ng-show="collect.deckNameInput" value="[[collect.deckName]]" class="form-control textbox"></input>
+						<input ng-click="collect.toggleInput('deactivate')" id="hidden" type="submit" name="update" value=" " hidefocus="true" tabindex="-1"/>
+						</form>
 					</div>
 					<div ng-repeat="card in collect.currentDeck">
 						<div class="editor-number"> [[ card.inDeck ]] </div>
