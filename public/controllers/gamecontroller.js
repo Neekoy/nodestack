@@ -7,6 +7,8 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	this.popupPanel = false;
 	this.currentDeck = [];
 	this.userdust = userdust;
+	this.deckNameInput = false;
+	this.deckName = "Deck name";
 
 	console.log("Greetings from the collection controller file.");
 
@@ -47,8 +49,16 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 				if (this.allCards[i].uid === cardId) {
 					if (this.allCards[i].quantity === 1) {
 						delete this.allCards[i].quantity;
+						if ( this.allCards[i].quantity < this.allCards[i].inDeck ) {
+							console.log("You will be left with less copies of this card than you are currently using in decks.");
+							this.allCards[i].inDeck = this.allCards[i].quantity;
+						}
 					} else {
 						this.allCards[i].quantity -= 1;
+						if ( this.allCards[i].quantity < this.allCards[i].inDeck ) {
+							console.log("You will be left with less copies of this card than you are currently using in decks.");
+							this.allCards[i].inDeck = this.allCards[i].quantity;
+						}
 					}
 				}
 			}			
@@ -77,8 +87,8 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	this.imageClicked = function(data) {
 		// This happens if the deck editor is opened
 		if ( this.editorOpened === true ) {
-			for ( var i in this.allOwnedCards ) {
-				if ( this.allOwnedCards[i].uid === data.uid) {
+			for ( var i in this.allCards ) {
+				if ( this.allCards[i].uid === data.uid) {
 					if ( ! data.inDeck || data.inDeck === 0) {
 						data.inDeck = 1;
 						this.currentDeck.push(data);
@@ -139,6 +149,19 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 		} else {
 			data.inDeck = quantity;
 		}
+	};
+
+	this.toggleInput = function(data) {
+		console.log(data);
+		if ( data === 'activate' ) {
+			this.deckNameInput = true;
+		} else {
+			this.deckNameInput = false;
+		}
+	};
+
+	this.saveDeck = function() {
+
 	};
 
 }]);

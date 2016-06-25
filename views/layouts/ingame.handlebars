@@ -90,14 +90,23 @@
 					<img ng-click="collect.imageClicked(card)" class="cardImage" ng-src="images/[[card.fullImage]]">
 					<div> [[ card.quantity ]] </div>
 				</div>
-				<div ng-show="collect.editorOpened" class="editor">
+
+				<!-- DECK EDITOR --> 
+				<div ng-show="collect.editorOpened" class="editor" ng-click="collect.toggleInput('deactivate')">
 					<div>
 						<button style="btn btn-active">Decks</button>
 						<button style="btn btn-active">Create</button>
 					</div>
+					<div ng-click="$event.stopPropagation()">
+						<div ng-show="!collect.deckNameInput" ng-click="collect.toggleInput('activate')"> [[ collect.deckName ]] </div>
+						<input ng-show="collect.deckNameInput" value="[[collect.deckName]]"></input>
+					</div>
 					<div ng-repeat="card in collect.currentDeck">
 						<div class="editor-number"> [[ card.inDeck ]] </div>
 						<div ng-click="collect.clickedInDecklist(card)" class="editor-card-name"> [[ card.name ]] </div>
+					</div>
+					<div>
+						<button ng-click="collect.saveDeck()" stlye="btn btn-active">Save deck</button>
 					</div>
 				</div>	
 			</div>
@@ -135,8 +144,6 @@
 		</div>
 	</div>
 </div>
-
-<div id='message'></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-svg-round-progressbar/0.4.4/roundProgress.min.js"></script>
