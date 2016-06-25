@@ -75,14 +75,14 @@
 				<div ng-click="$event.stopPropagation()" class="popupPanel">
 					<div><img ng-src="images/[[collect.cardHighlighted.fullImage]]"></div>
 					<div>
-						<button class="btn btn-active">Sell Card</button>
+						<button ng-click="collect.sellCard(collect.cardHighlighted)" class="btn btn-active">Sell Card</button>
 						<button ng-click="collect.buyCard(collect.cardHighlighted)" class="btn btn-active">Buy Card</button>
 					</div>
 				</div>
 				</div>
 
 				<!-- CARD COLLECTION BODY -->
-				<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allOwnedCards" class="cardShowcase">
+				<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allCards" ng-if="card.quantity > 0" class="cardShowcase">
 					<img ng-click="collect.imageClicked(card)"  class="cardImage" ng-src="images/[[card.fullImage]]">
 					<div> [[ card.quantity ]] </div>
 				</div>

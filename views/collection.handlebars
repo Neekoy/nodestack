@@ -7,11 +7,11 @@
 			<button ng-click="collect.toggleEditor()" style="btn btn-active">Deck editor</button>
 		</div>
 
-		<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allOwnedCards" class="cardShowcase">
+		<div ng-show="collect.checkTab('ownedCards')" style="float: left" ng-repeat="card in collect.allCards" class="cardShowcase">
 			<img ng-click="collect.imageClicked(card)"  class="cardImage" ng-src="images/[[card.fullImage]]">
 			<div> [[ card.quantity ]] </div>
 		</div>
-		<div ng-show="collect.checkTab('allCards')" style="float: left" ng-repeat="card in collect.allCards" class="cardShowcase">
+		<div ng-show="collect.checkTab('allCards')" style="float: left" ng-repeat="card in collect.allCards3" class="cardShowcase">
 			<img ng-click="collect.imageClicked(card)" class="cardImage" ng-src="images/[[card.fullImage]]">
 			<div> [[ card.quantity ]] </div>
 		</div>

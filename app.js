@@ -183,6 +183,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('buyCard', function(data) {
+      action = "buying";
       cardInfo = [];
       userInfo = [];
       exists = false;
@@ -204,8 +205,7 @@ io.sockets.on('connection', function(socket) {
                 userInfo[0].markModified('ownedCards');
                 userInfo[0].save(function (err) {
                   if (err) throw err;
-                  toSubmit.push(userInfo, cardInfo);
-                  console.log(toSubmit);
+                  toSubmit.push(userInfo, cardInfo, action);
                   socket.emit("updateOwned", toSubmit);
                 });
                 exists = true;
@@ -217,7 +217,7 @@ io.sockets.on('connection', function(socket) {
                 userInfo[0].markModified('ownedCards');
                 userInfo[0].save(function (err) {
                   if (err) throw err;
-                  toSubmit.push(userInfo, cardInfo);
+                  toSubmit.push(userInfo, cardInfo, action);
                   socket.emit("updateOwned", toSubmit);
                 });                
               }
@@ -226,9 +226,38 @@ io.sockets.on('connection', function(socket) {
 
           } else {
             console.log("You don't have enough dust to purchase this card.");
+            socket.emit("buyCardRes", "You don't have enough dust to purchase this card.");
           };
         });
       }); 
+    });
+
+    socket.on("sellCard", function(data) {
+      action = "selling";
+      toSubmit = [];
+      cardsGetModel.find( { "name": data.name }, function (err, data) {
+        if (err) throw err;
+        cardInfo = data;
+        gameUserModel.find( { "username": username }, function (err, data)  {
+          if (err) throw err;
+          userInfo = data;
+          ownedCards = userInfo[0].ownedCards[0];
+
+          userInfo[0].dust += cardInfo[0].sellPrice;
+
+          async.forEach(Object.keys(ownedCards), function(item, callback) {
+            if ( item === cardInfo[0].uid ) {
+              userInfo[0].ownedCards[0][item] -= 1;
+              userInfo[0].markModified('ownedCards');
+              userInfo[0].save(function (err) {
+                if (err) throw err;
+                toSubmit.push(userInfo, cardInfo, action);
+                socket.emit("updateOwned", toSubmit);
+              });
+            };
+          });
+        });
+      });
     });
 
     socket.on('chatMessage', function(data) {

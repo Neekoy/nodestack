@@ -6,6 +6,7 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	this.editorOpened = false;
 	this.popupPanel = false;
 	this.currentDeck = [];
+	this.userdust = userdust;
 
 	console.log("Greetings from the collection controller file.");
 
@@ -13,15 +14,13 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 		ownedList = data[0];
 		all = data[1];
 		this.allCards = all;
-		this.allOwnedCards = [];
 		withQuantity = ownedList[0];
 		
 		for (var i in ownedList[0]) {
 			for (var k in this.allCards) {
 				if (this.allCards[k].uid === i) {
-					console.log("There is the " + i + " card match." + this.allCards[k]);
+//					console.log("There is the " + i + " card match." + this.allCards[k]);
 					this.allCards[k].quantity = withQuantity[i];
-					this.allOwnedCards.push(this.allCards[k]);
 				}
 			}
 		}
@@ -30,25 +29,31 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	}.bind(this));
 
 	socket.on("updateOwned", function(data) {
-		console.log('updates');
-		this.userdust = data[0].dust;
+		action = data[2];		
+		this.userdust = data[0][0].dust;
 		cardId = data[1][0].uid;
-		console.log(cardId);
-		for (var i in this.allCards) {
-			if (this.allCards[i].uid === cardId) {
-				if (this.allCards[i].quantity) {
-					this.allCards[i].quantity += 1;
-					for ( var k in this.allOwnedCards ) {
-						if ( this.allOwnedCards[k].uid === this.allCards[i].uid) {
-							console.log(this.allOwnedCards[k].quantity);
-						}
+		if (action === "buying") {
+			for (var i in this.allCards) {
+				if (this.allCards[i].uid === cardId) {
+					if (this.allCards[i].quantity) {
+						this.allCards[i].quantity += 1;
+					} else {
+						this.allCards[i].quantity = 1;
 					}
-				} else {
-					this.allCards[i].quantity = 1;
-					this.allOwnedCards.push(this.allCards[i]);
 				}
 			}
+		} else if ( action === "selling") {
+			for (var i in this.allCards) {
+				if (this.allCards[i].uid === cardId) {
+					if (this.allCards[i].quantity === 1) {
+						delete this.allCards[i].quantity;
+					} else {
+						this.allCards[i].quantity -= 1;
+					}
+				}
+			}			
 		}
+		
 		$scope.$apply();
 	}.bind(this));
 
@@ -110,6 +115,14 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	socket.on("buyCardRes", function (data) {
 		console.log(data);
 	});
+
+	this.sellCard = function(data) {
+		if ( ! data.quantity || data.quantity < 1 ) {
+			console.log("You don't own any copies of this card.");
+		} else {
+			socket.emit("sellCard", data);
+		}
+	};
 
 	this.hidePopupPanel = function() {
 		this.popupPanel = false;

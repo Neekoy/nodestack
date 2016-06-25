@@ -12,7 +12,7 @@ socket.on('alert', function(data) {
 
 socket.on('serverMsg', function(data) {
 	for (var i in data) {
-		console.log(i);
+//		console.log(i);
 	}
     element = document.getElementById('message');
     element.innerHTML = data[0].strength;
@@ -62,8 +62,6 @@ app.controller('mainController', function($scope, $http) {
 	};
 
 	socket.on('userData', function(data) {
-		console.log(data);
-		console.log(data[0].dust);
 		this.username = data[0].username;
 		username = data[0].username;
 		this.usergold = data[0].gold;
