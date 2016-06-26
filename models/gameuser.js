@@ -21,7 +21,7 @@ var gameUserSchema = mongoose.Schema({
 	decks: [{
 		name: String,
 		id: String,
-		cards: []
+		cards: {}
 	}],
 	ownedCards: []
 });

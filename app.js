@@ -272,9 +272,14 @@ io.sockets.on('connection', function(socket) {
         allDecks = userInfo[0].decks;
 
         async.forEach(allDecks, function(deck, callback) {
-          if ( deck.id === deckInfo.id ) {            
-            deck = deckInfo;
+          if ( deck.id === deckInfo.id ) {
+            for ( var i in userInfo[0].decks ) {
+              if ( deckInfo.id === userInfo[0].decks[i].id) {
+                userInfo[0].decks[i].cards = deckInfo.cards;
+              }
+            }
             userInfo[0].markModified('decks');
+            console.log(userInfo[0].decks);
             userInfo[0].save(function(err) {
               if (err) throw err;
             });
@@ -290,7 +295,7 @@ io.sockets.on('connection', function(socket) {
             });
           };
         }
-        );
+      );
 
 /*     
         for ( var i in userInfo[0].decks ) {

@@ -100,6 +100,7 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 					if ( ! data.inDeck || data.inDeck === 0) {
 						data.inDeck = 1;
 						this.currentDeck.push(data);
+						console.log(this.currentDeck);
 					} else {
 						if ( data.inDeck < 4 && data.inDeck < data.quantity ) {
 							quantity = data.inDeck;
@@ -153,14 +154,18 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 
 		if ( data != "newDeck" ) {
 			this.deckId = data.id;
-			for ( var i in data.cards[0] ) {
+			for ( var i in data.cards ) {
 				for ( var k in this.allCards ) {
 					if ( i === this.allCards[k].uid ) {
-						this.allCards[k].inDeck = data.cards[0][i];
+						this.allCards[k].inDeck = data.cards[i];
 						this.currentDeck.push(this.allCards[k]);
 					}
 				}
 			};
+		} else {
+			this.deckId = false;
+			this.deckName = "Deck name";
+			this.currentDeck = [];
 		};
 	};
 
@@ -205,6 +210,7 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 				id: deckId,
 				cards: deck
 			};
+			console.log(deckWithName);
 			socket.emit('saveDeck', deckWithName);
 			this.currentDeck = [];
 			for ( var i in this.allCards ) {
