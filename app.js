@@ -271,6 +271,8 @@ io.sockets.on('connection', function(socket) {
         userInfo = data;
         allDecks = userInfo[0].decks;
 
+        // TODO: PERFORM CHECKS FOR ALL SUBMITTED DATA (IF ITS VALID, IF THERE ARE ENOUGH CARDS)
+
         async.forEach(allDecks, function(deck, callback) {
           if ( deck.id === deckInfo.id ) {
             for ( var i in userInfo[0].decks ) {
@@ -296,16 +298,6 @@ io.sockets.on('connection', function(socket) {
           };
         }
       );
-
-/*     
-        for ( var i in userInfo[0].decks ) {
-          if ( deckInfo.id === userInfo[0].decks[i].id ) {
-            userInfo[0].decks[i] = deckInfo;
-          }
-        }
-
-
-*/
 
       });
     });

@@ -94,13 +94,12 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 
 	this.imageClicked = function(data) {
 		// This happens if the deck editor is opened
-		if ( this.editorOpened === true ) {
+		if ( this.editorOpened === true && this.showDeckEditor ) {
 			for ( var i in this.allCards ) {
 				if ( this.allCards[i].uid === data.uid) {
 					if ( ! data.inDeck || data.inDeck === 0) {
 						data.inDeck = 1;
 						this.currentDeck.push(data);
-						console.log(this.currentDeck);
 					} else {
 						if ( data.inDeck < 4 && data.inDeck < data.quantity ) {
 							quantity = data.inDeck;
@@ -149,11 +148,9 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	};
 
 	this.editSelectedDeck = function(data) {
-		this.showDecklist = false;
-		this.showDeckEditor = true;
-
 		if ( data != "newDeck" ) {
 			this.deckId = data.id;
+			this.deckName = data.name;
 			for ( var i in data.cards ) {
 				for ( var k in this.allCards ) {
 					if ( i === this.allCards[k].uid ) {
@@ -162,6 +159,8 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 					}
 				}
 			};
+			this.showDecklist = false;
+			this.showDeckEditor = true;
 		} else {
 			this.deckId = false;
 			this.deckName = "Deck name";
@@ -212,6 +211,13 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 			};
 			console.log(deckWithName);
 			socket.emit('saveDeck', deckWithName);
+
+			for ( var i in this.userdecks ) {
+				if ( this.userdecks[i].id === deckId ) {
+					this.userdecks[i] = deckWithName;
+				}
+			};
+
 			this.currentDeck = [];
 			for ( var i in this.allCards ) {
 				if ( this.allCards[i].inDeck > 0 ) {
