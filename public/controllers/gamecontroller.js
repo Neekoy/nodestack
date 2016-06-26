@@ -7,8 +7,13 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	this.popupPanel = false;
 	this.currentDeck = [];
 	this.userdust = userdust;
+
+	this.userdecks = "";
+	this.showDecklist = true;
+	this.showDeckEditor = false;
 	this.deckNameInput = false;
 	this.deckName = "Deck name";
+	this.deckId = false;
 
 	console.log("Greetings from the collection controller file.");
 
@@ -76,6 +81,9 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 	}
 
 	this.toggleEditor = function() {
+		if ( this.userdecks === "" ) {
+			this.userdecks = userdecks;
+		}
 		if ( this.editorOpened === false ){
 			this.editorOpened = true;
 		} else {
@@ -139,6 +147,23 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 		this.cardHighlighted = "";
 	};
 
+	this.editSelectedDeck = function(data) {
+		this.showDecklist = false;
+		this.showDeckEditor = true;
+
+		if ( data != "newDeck" ) {
+			this.deckId = data.id;
+			for ( var i in data.cards[0] ) {
+				for ( var k in this.allCards ) {
+					if ( i === this.allCards[k].uid ) {
+						this.allCards[k].inDeck = data.cards[0][i];
+						this.currentDeck.push(this.allCards[k]);
+					}
+				}
+			};
+		};
+	};
+
 	this.clickedInDecklist = function(data) {
 		quantity = data.inDeck;
 		quantity -= 1;
@@ -167,14 +192,28 @@ angular.module('mainApp').controller('collectionControl', ['$scope', '$http', fu
 		deck = {};
 		deckWithName = {};
 		for ( var i in this.currentDeck ) {
-			console.log(this.currentDeck[i].uid);
-			console.log(this.currentDeck[i].inDeck);
 			deck[this.currentDeck[i].uid] = this.currentDeck[i].inDeck;
 		};
 		if ( this.deckName != "" ) {
-			deckWithName[this.deckName] = deck;
+			if ( this.deckId === false ) {
+				deckId = "";
+			} else {
+				deckId = this.deckId;
+			};
+			deckWithName = {
+				name: this.deckName,
+				id: deckId,
+				cards: deck
+			};
 			socket.emit('saveDeck', deckWithName);
-			this.currentDeck = [];			
+			this.currentDeck = [];
+			for ( var i in this.allCards ) {
+				if ( this.allCards[i].inDeck > 0 ) {
+					delete this.allCards[i].inDeck;
+				};
+			};
+			this.showDecklist = true;
+			this.showDeckEditor = false;
 		} else {
 			console.log("Please enter a name for the deck.");
 		}

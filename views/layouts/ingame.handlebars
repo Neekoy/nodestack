@@ -94,23 +94,32 @@
 				<!-- DECK EDITOR --> 
 				<div ng-show="collect.editorOpened" class="editor" ng-click="collect.toggleInput('deactivate')">
 					<div>
-						<button style="btn btn-active">Decks</button>
-						<button style="btn btn-active">Create</button>
+						<button ng-click="collect.editSelectedDeck('newDeck')" class="btn btn-active">Create New Deck</button>
 					</div>
-					<div ng-click="$event.stopPropagation()">
-						<div ng-show="!collect.deckNameInput" ng-click="collect.toggleInput('activate')"> [[ collect.deckName ]] </div>
-						<form>
-						<input ng-model="collect.deckName" ng-show="collect.deckNameInput" value="[[collect.deckName]]" class="form-control textbox"></input>
-						<input ng-click="collect.toggleInput('deactivate')" id="hidden" type="submit" name="update" value=" " hidefocus="true" tabindex="-1"/>
-						</form>
+
+					<div ng-show="collect.showDecklist" class="deckList">
+						<div ng-repeat="deck in collect.userdecks">
+							<div ng-click="collect.editSelectedDeck(deck)"> [[ deck.name ]] </div>
+						</div>
 					</div>
-					<div ng-repeat="card in collect.currentDeck">
-						<div class="editor-number"> [[ card.inDeck ]] </div>
-						<div ng-click="collect.clickedInDecklist(card)" class="editor-card-name"> [[ card.name ]] </div>
+
+					<div ng-show="collect.showDeckEditor" class="deckEditing">
+						<div ng-click="$event.stopPropagation()">
+							<div ng-show="!collect.deckNameInput" ng-click="collect.toggleInput('activate')"> [[ collect.deckName ]] </div>
+							<form>
+							<input ng-model="collect.deckName" ng-show="collect.deckNameInput" value="[[collect.deckName]]" class="form-control textbox"></input>
+							<input ng-click="collect.toggleInput('deactivate')" id="hidden" type="submit" name="update" value=" " hidefocus="true" tabindex="-1"/>
+							</form>
+						</div>
+						<div ng-repeat="card in collect.currentDeck">
+							<div class="editor-number"> [[ card.inDeck ]] </div>
+							<div ng-click="collect.clickedInDecklist(card)" class="editor-card-name"> [[ card.name ]] </div>
+						</div>
+						<div>
+							<button ng-click="collect.saveDeck()" stlye="btn btn-active">Save deck</button>
+						</div>
 					</div>
-					<div>
-						<button ng-click="collect.saveDeck()" stlye="btn btn-active">Save deck</button>
-					</div>
+
 				</div>	
 			</div>
 		</div>

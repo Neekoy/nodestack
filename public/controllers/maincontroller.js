@@ -5,6 +5,7 @@ var chatbox = document.getElementById('chatcontent');
 var username = "";
 var userdust = 0;
 var dataFetched = false;
+var userdecks = [];
 
 socket.on('alert', function(data) {
 		console.log(data);
@@ -68,6 +69,7 @@ app.controller('mainController', function($scope, $http) {
 		this.userlevel = data[0].level;
 		this.userexp = data[0].experience;
 		this.userdust = data[0].dust;
+		userdecks = data[0].decks;
 		userdust = data[0].dust;
 		$scope.$apply();
 	}.bind(this));

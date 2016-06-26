@@ -261,11 +261,48 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on("saveDeck", function (data) {
+      exists = false;
+      deckInfo = data;
+      if ( deckInfo.id === "" ) {
+        deckInfo.id = uuid.v4();
+      };
       gameUserModel.find( { username: username }, function (err, data) {
         if (err) throw err;
-        
+        userInfo = data;
+        allDecks = userInfo[0].decks;
+
+        async.forEach(allDecks, function(deck, callback) {
+          if ( deck.id === deckInfo.id ) {            
+            deck = deckInfo;
+            userInfo[0].markModified('decks');
+            userInfo[0].save(function(err) {
+              if (err) throw err;
+            });
+            exists = true;
+          };
+          callback();
+        }, function(err) {
+            if ( exists === false ) {
+            userInfo[0].decks.push(deckInfo);
+            userInfo[0].markModified('decks');
+            userInfo[0].save(function (err) {
+              if (err) throw err;
+            });
+          };
+        }
+        );
+
+/*     
+        for ( var i in userInfo[0].decks ) {
+          if ( deckInfo.id === userInfo[0].decks[i].id ) {
+            userInfo[0].decks[i] = deckInfo;
+          }
+        }
+
+
+*/
+
       });
-      console.log(data);
     });
 
     socket.on('chatMessage', function(data) {
