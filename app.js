@@ -112,7 +112,7 @@ app.use('/users', users);
 app.use('/', navigation);
 
 // Set Port
-app.set('port', (process.env.PORT || 3001));
+app.set('port', (process.env.PORT || 8080));
 
 // Start the Server
 serv.listen(app.get('port'), function(){
